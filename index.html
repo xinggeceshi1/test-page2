@@ -2,14 +2,35 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>你的情感潜意识测试</title>
 
 <style>
 body{
     margin:0;
     font-family:-apple-system;
-    background:linear-gradient(180deg,#ffe4ec,#fff);
+    background:linear-gradient(180deg,#fff0f6,#ffe4ec,#fff);
+    overflow-x:hidden;
+}
+
+/* 🌸 浮动光晕 */
+.bg{
+    position:fixed;
+    width:300px;
+    height:300px;
+    background:radial-gradient(circle,#ffb6c1,transparent);
+    filter:blur(80px);
+    z-index:-1;
+    animation:move 8s infinite alternate;
+}
+.bg2{
+    top:200px;
+    left:50%;
+    animation-delay:3s;
+}
+@keyframes move{
+    from{transform:translateY(0)}
+    to{transform:translateY(80px)}
 }
 
 /* 顶部 */
@@ -23,23 +44,25 @@ body{
     color:#ff4d6d;
 }
 .header p{
-    font-size:12px;
-    color:#999;
+    font-size:13px;
+    color:#ff7a90;
 }
 
-/* 卡片 */
+/* 容器 */
 .container{
     max-width:520px;
     margin:0 auto;
     padding:15px;
 }
 
+/* 卡片 */
 .card{
-    background:#fff;
-    border-radius:18px;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
     padding:18px;
     margin-bottom:15px;
-    box-shadow:0 8px 25px rgba(255,77,109,0.1);
+    box-shadow:0 10px 30px rgba(255,77,109,0.12);
 }
 
 /* 问题 */
@@ -49,20 +72,34 @@ body{
     color:#333;
 }
 
+/* 💬 情绪引导 */
+.tip{
+    font-size:12px;
+    color:#ff7a90;
+    margin-top:6px;
+}
+
 /* 选项 */
 .option{
-    padding:12px;
+    padding:13px;
     margin-top:10px;
-    border-radius:12px;
-    background:#fff0f4;
+    border-radius:14px;
+    background:#fff;
+    border:1px solid #ffe4ec;
     cursor:pointer;
-    transition:0.2s;
+    transition:all 0.25s ease;
     font-size:14px;
 }
 
+.option:hover{
+    background:#fff0f6;
+}
+
 .option.active{
-    background:#ff4d6d;
+    background:linear-gradient(90deg,#ff4d6d,#ff8fa3);
     color:#fff;
+    box-shadow:0 6px 15px rgba(255,77,109,0.3);
+    transform:scale(1.02);
 }
 
 /* 按钮 */
@@ -70,103 +107,102 @@ body{
     width:100%;
     padding:16px;
     border:none;
-    border-radius:14px;
+    border-radius:30px;
     background:linear-gradient(90deg,#ff4d6d,#ff758f);
     color:#fff;
     font-size:16px;
     margin-top:20px;
+    box-shadow:0 10px 25px rgba(255,77,109,0.3);
+}
+
+/* loading */
+#loading{
+    display:none;
+    text-align:center;
+    color:#ff4d6d;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="bg"></div>
+<div class="bg bg2"></div>
+
 <div class="header">
 <h1>你的情感潜意识测试</h1>
-<p>已有 63,728 人完成测试</p>
+<p>💗 用3分钟，看清你的情感模式</p>
 </div>
 
 <div class="container" id="app"></div>
 
 <div class="container">
 <button class="btn" onclick="submitTest()">查看分析结果</button>
+<div id="loading">正在解析你的内心世界...</div>
 </div>
 
 <script>
 
-/* 20题（10单选 + 10多选） */
 var questions = [
 
-{q:"1. 当你喜欢一个人时，你更容易：",type:"single",a:["主动表达","暗中观察","等待对方靠近"]},
-{q:"2. 对方回复慢时你会：",type:"single",a:["胡思乱想","转移注意","不太在意"]},
-{q:"3. 你更向往的关系是：",type:"single",a:["稳定安心","激情浪漫","自由随性"]},
-{q:"4. 你更害怕：",type:"single",a:["被忽视","被束缚","被伤害"]},
-{q:"5. 你在关系中通常：",type:"single",a:["付出更多","保持平衡","保护自己"]},
-{q:"6. 对未来你更希望：",type:"single",a:["确定性","可能性","惊喜"]},
-{q:"7. 面对争吵你会：",type:"single",a:["沟通解决","逃避冷处理","情绪爆发"]},
-{q:"8. 你更在意：",type:"single",a:["安全感","新鲜感","理解感"]},
-{q:"9. 你更容易被吸引：",type:"single",a:["成熟稳定型","幽默有趣型","神秘独立型"]},
-{q:"10. 你觉得自己：",type:"single",a:["理性","感性","矛盾"]},
+{q:"1. 当你喜欢一个人时，你更倾向于：",tip:"很多人其实在这里就暴露了真实状态",type:"single",a:["主动表达","暗中观察","等待对方靠近"]},
+{q:"2. 对方回复慢时你会：",tip:"你的反应，决定了你的情感安全感",type:"single",a:["胡思乱想","转移注意","不太在意"]},
+{q:"3. 你更向往的关系是：",tip:"这是你内心真正渴望的模式",type:"single",a:["稳定安心","激情浪漫","自由随性"]},
+{q:"4. 你更害怕：",tip:"很多人其实不敢承认这一点",type:"single",a:["被忽视","被束缚","被伤害"]},
+{q:"5. 你在关系中通常：",tip:"你是付出型还是防御型？",type:"single",a:["付出更多","保持平衡","保护自己"]},
+{q:"6. 对未来你更希望：",tip:"你的选择代表你的底层思维",type:"single",a:["确定性","可能性","惊喜"]},
+{q:"7. 面对争吵你会：",tip:"这里最能看出真实性格",type:"single",a:["沟通解决","逃避冷处理","情绪爆发"]},
+{q:"8. 你更在意：",tip:"这是关系中最核心的需求",type:"single",a:["安全感","新鲜感","理解感"]},
+{q:"9. 你更容易被吸引：",tip:"吸引你的类型，决定你会遇到谁",type:"single",a:["成熟稳定型","幽默有趣型","神秘独立型"]},
+{q:"10. 你觉得自己：",tip:"你对自己的认知很关键",type:"single",a:["理性","感性","矛盾"]},
 
-/* 多选 */
-{q:"11. 让你心动的瞬间（多选）",type:"multi",a:["被认真倾听","被记住细节","被偏爱","被保护"]},
-{q:"12. 你在意的点（多选）",type:"multi",a:["态度","细节","未来","感觉"]},
-{q:"13. 你的不安全感来自（多选）",type:"multi",a:["不被回应","对方变化","过往经历","自身不自信"]},
-{q:"14. 你期待对方（多选）",type:"multi",a:["主动联系","情绪稳定","有责任感","有仪式感"]},
-{q:"15. 你会因为什么难过（多选）",type:"multi",a:["被忽略","冷淡","误解","争吵"]},
-{q:"16. 你的优点（多选）",type:"multi",a:["温柔","独立","理性","有趣"]},
-{q:"17. 你的弱点（多选）",type:"multi",a:["敏感","犹豫","多想","情绪化"]},
-{q:"18. 你喜欢的相处方式（多选）",type:"multi",a:["黏人","适度空间","随性","仪式感"]},
-{q:"19. 你对爱情的期待（多选）",type:"multi",a:["稳定","激情","成长","陪伴"]},
-{q:"20. 你更像（多选）",type:"multi",a:["付出型","观察型","理性型","情绪型"]}
+{q:"11. 让你心动的瞬间（多选）",tip:"你真正被触动的点",type:"multi",a:["被认真倾听","被记住细节","被偏爱","被保护"]},
+{q:"12. 你在意的点（多选）",tip:"这些决定你是否会投入",type:"multi",a:["态度","细节","未来","感觉"]},
+{q:"13. 你的不安全感来自（多选）",tip:"很多人都忽略了这一点",type:"multi",a:["不被回应","对方变化","过往经历","自身不自信"]},
+{q:"14. 你期待对方（多选）",tip:"你内心对关系的要求",type:"multi",a:["主动联系","情绪稳定","有责任感","有仪式感"]},
+{q:"15. 你会因为什么难过（多选）",tip:"这里藏着你的情绪开关",type:"multi",a:["被忽略","冷淡","误解","争吵"]},
+{q:"16. 你的优点（多选）",tip:"你自己未必完全意识到",type:"multi",a:["温柔","独立","理性","有趣"]},
+{q:"17. 你的弱点（多选）",tip:"这会直接影响你的关系",type:"multi",a:["敏感","犹豫","多想","情绪化"]},
+{q:"18. 你喜欢的相处方式（多选）",tip:"这决定你适合什么人",type:"multi",a:["黏人","适度空间","随性","仪式感"]},
+{q:"19. 你对爱情的期待（多选）",tip:"你未来的走向就在这里",type:"multi",a:["稳定","激情","成长","陪伴"]},
+{q:"20. 你更像（多选）",tip:"你的核心人格标签",type:"multi",a:["付出型","观察型","理性型","情绪型"]}
 ];
 
 var answers = {};
 
 function render(){
 var html="";
-
 for(var i=0;i<questions.length;i++){
-var q = questions[i];
-
-html += '<div class="card">';
-html += '<div class="q">'+q.q+'</div>';
+var q=questions[i];
+html+='<div class="card">';
+html+='<div class="q">'+q.q+'</div>';
+html+='<div class="tip">'+q.tip+'</div>';
 
 for(var j=0;j<q.a.length;j++){
-
 if(q.type=="single"){
-html += '<div class="option" onclick="selectSingle('+i+','+j+',this)">'+q.a[j]+'</div>';
+html+='<div class="option" onclick="selectSingle('+i+','+j+',this)">'+q.a[j]+'</div>';
 }else{
-html += '<div class="option" onclick="selectMulti('+i+','+j+',this)">'+q.a[j]+'</div>';
+html+='<div class="option" onclick="selectMulti('+i+','+j+',this)">'+q.a[j]+'</div>';
+}
+}
+html+='</div>';
+}
+document.getElementById("app").innerHTML=html;
 }
 
-}
-
-html += '</div>';
-}
-
-document.getElementById("app").innerHTML = html;
-}
-
-/* 单选 */
 function selectSingle(i,j,el){
 answers[i]=j;
-
-var items = el.parentNode.querySelectorAll(".option");
+var items=el.parentNode.querySelectorAll(".option");
 for(var k=0;k<items.length;k++){
 items[k].classList.remove("active");
 }
-
 el.classList.add("active");
 }
 
-/* 多选 */
 function selectMulti(i,j,el){
-
 if(!answers[i]) answers[i]=[];
-
-var index = answers[i].indexOf(j);
-
+var index=answers[i].indexOf(j);
 if(index>-1){
 answers[i].splice(index,1);
 el.classList.remove("active");
@@ -174,24 +210,23 @@ el.classList.remove("active");
 answers[i].push(j);
 el.classList.add("active");
 }
-
 }
 
-/* 提交 */
 function submitTest(){
-
-if(Object.keys(answers).length<20){
-alert("请完成所有题目");
+if(Object.keys(answers).length<questions.length){
+alert("请完成全部20题");
 return;
 }
-
 localStorage.setItem("result",JSON.stringify(answers));
 
+document.getElementById("loading").style.display="block";
+
+setTimeout(function(){
 window.location.href="pay.html";
+},800);
 }
 
 render();
-
 </script>
 
 </body>
