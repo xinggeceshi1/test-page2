@@ -168,13 +168,17 @@ body{
 </div>
 
 <!-- ✅ 你的收款码 -->
+    <div style="text-align:center;font-size:14px;color:#ff4d6d;margin-top:10px;">
+👇 长按识别二维码完成支付
+</div>
+
 <img src="your_qr.jpg" class="qr">
 
 <div style="text-align:center;color:#999;font-size:12px;">
 原价 ¥29.9 · 今日限时体验价
 </div>
 
-<button class="btn" onclick="pay()">立即解锁</button>
+<button class="btn" onclick="pay()">点击长按二维码支付解锁</button>
 
 <!-- ✅ 新增按钮 -->
 <button class="btn2" onclick="goReport()">我已支付，查看报告</button>
@@ -228,7 +232,7 @@ setInterval(showToast,4000);
 
 /* 原跳转（保留） */
 function pay(){
-window.location.href="你的收款链接";
+    alert("请长按下方二维码 → 识别后完成支付");
 }
 
 /* 新增跳转 */
