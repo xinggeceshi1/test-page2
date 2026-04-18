@@ -93,6 +93,18 @@ body{
     box-shadow:0 6px 20px rgba(255,77,109,0.3);
 }
 
+/* 次按钮 */
+.btn2{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:#eee;
+    color:#333;
+    font-size:14px;
+    margin-top:12px;
+}
+
 /* 提示 */
 .tip{
     text-align:center;
@@ -101,7 +113,7 @@ body{
     margin-top:10px;
 }
 
-/* 🔥 滚动提示 */
+/* toast */
 .toast{
     position:fixed;
     bottom:20px;
@@ -113,6 +125,14 @@ body{
     font-size:12px;
     box-shadow:0 4px 12px rgba(0,0,0,0.1);
     display:none;
+}
+
+/* 二维码 */
+.qr{
+    width:220px;
+    display:block;
+    margin:15px auto;
+    border-radius:12px;
 }
 </style>
 </head>
@@ -138,11 +158,26 @@ body{
 
 <div class="price">限时 ¥2.88 解锁完整报告</div>
 
+<!-- ✅ 新增（不影响原内容） -->
+<div style="text-align:center;font-size:13px;color:#666;margin-top:8px;">
+请支付后查看完整报告
+</div>
+
+<div style="text-align:center;font-size:14px;color:#07c160;margin-top:6px;">
+微信支付
+</div>
+
+<!-- ✅ 你的收款码 -->
+<img src="your_qr.jpg" class="qr">
+
 <div style="text-align:center;color:#999;font-size:12px;">
 原价 ¥29.9 · 今日限时体验价
 </div>
 
 <button class="btn" onclick="pay()">立即解锁</button>
+
+<!-- ✅ 新增按钮 -->
+<button class="btn2" onclick="goReport()">我已支付，查看报告</button>
 
 <div class="tip">
 ⚠️ 限时解锁 · 超时失效<br>
@@ -153,7 +188,6 @@ body{
 
 </div>
 
-<!-- 🔥 滚动提示 -->
 <div class="toast" id="toast">刚刚有人解锁了完整报告</div>
 
 <script>
@@ -175,22 +209,14 @@ setTimeout(updateTimer,1000);
 document.getElementById("timer").innerHTML="已失效";
 }
 }
-
 updateTimer();
 
-/* 🔥 滚动提示 */
-var texts = [
-"上海用户刚刚解锁",
-"北京用户已查看完整报告",
-"广州用户完成解锁",
-"杭州用户正在查看分析",
-"深圳用户已解锁"
-];
+/* 滚动提示 */
+var texts = ["上海用户刚刚解锁","北京用户已查看","广州用户完成解锁","深圳用户已解锁"];
 
 function showToast(){
 var t = document.getElementById("toast");
 var rand = Math.floor(Math.random()*texts.length);
-
 t.innerHTML = texts[rand];
 t.style.display = "block";
 
@@ -198,19 +224,16 @@ setTimeout(function(){
 t.style.display = "none";
 },2000);
 }
-
 setInterval(showToast,4000);
 
-/* 支付 */
+/* 原跳转（保留） */
 function pay(){
+window.location.href="你的收款链接";
+}
 
-/* 👉 替换成你的链接 */
-window.location.href = "你的收款链接";
-
-setTimeout(function(){
-window.location.href = "report.html";
-},1500);
-
+/* 新增跳转 */
+function goReport(){
+window.location.href="report.html";
 }
 
 </script>
