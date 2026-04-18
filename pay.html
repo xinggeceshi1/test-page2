@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解锁你的专属分析</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system;
+    background:linear-gradient(180deg,#ffe4ec,#fff);
+}
+
+/* 容器 */
+.container{
+    max-width:520px;
+    margin:0 auto;
+    padding:20px;
+}
+
+/* 标题 */
+.title{
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#ff4d6d;
+}
+
+/* 副标题 */
+.sub{
+    text-align:center;
+    color:#999;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* 卡片 */
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 10px 30px rgba(255,77,109,0.1);
+}
+
+/* 类型 */
+.type{
+    text-align:center;
+    font-size:20px;
+    color:#ff4d6d;
+    font-weight:bold;
+}
+
+/* 模糊区 */
+.blur{
+    margin-top:15px;
+    padding:15px;
+    background:#fff0f4;
+    border-radius:12px;
+    color:#999;
+    filter:blur(3px);
+}
+
+/* 倒计时 */
+.timer{
+    text-align:center;
+    font-size:22px;
+    color:#ff3b30;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+/* 价格 */
+.price{
+    text-align:center;
+    font-size:28px;
+    color:#ff3b30;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+/* 按钮 */
+.btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(90deg,#ff4d6d,#ff758f);
+    color:#fff;
+    font-size:16px;
+    margin-top:20px;
+    box-shadow:0 6px 20px rgba(255,77,109,0.3);
+}
+
+/* 提示 */
+.tip{
+    text-align:center;
+    font-size:12px;
+    color:#999;
+    margin-top:10px;
+}
+
+/* 🔥 滚动提示 */
+.toast{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#fff;
+    padding:10px 15px;
+    border-radius:20px;
+    font-size:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">你的情感潜意识报告已生成</div>
+<div class="sub">系统正在解析你的深层情感结构...</div>
+
+<div class="card">
+
+<div class="type">你的隐藏类型：高敏情感型（稀有）</div>
+
+<div class="blur">
+你在关系中极容易付出真实情感，但同时也容易受到伤害...  
+你对细节极其敏感，这种特质既是优势，也是你的软肋...
+（完整分析已加密）
+</div>
+
+<div class="timer" id="timer">09:59</div>
+
+<div class="price">限时 ¥2.88 解锁完整报告</div>
+
+<div style="text-align:center;color:#999;font-size:12px;">
+原价 ¥29.9 · 今日限时体验价
+</div>
+
+<button class="btn" onclick="pay()">立即解锁</button>
+
+<div class="tip">
+⚠️ 限时解锁 · 超时失效<br>
+🔥 已有 63,728 人查看完整分析
+</div>
+
+</div>
+
+</div>
+
+<!-- 🔥 滚动提示 -->
+<div class="toast" id="toast">刚刚有人解锁了完整报告</div>
+
+<script>
+
+/* 倒计时 */
+var time = 600;
+
+function updateTimer(){
+var m = Math.floor(time/60);
+var s = time%60;
+
+document.getElementById("timer").innerHTML =
+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
+
+if(time>0){
+time--;
+setTimeout(updateTimer,1000);
+}else{
+document.getElementById("timer").innerHTML="已失效";
+}
+}
+
+updateTimer();
+
+/* 🔥 滚动提示 */
+var texts = [
+"上海用户刚刚解锁",
+"北京用户已查看完整报告",
+"广州用户完成解锁",
+"杭州用户正在查看分析",
+"深圳用户已解锁"
+];
+
+function showToast(){
+var t = document.getElementById("toast");
+var rand = Math.floor(Math.random()*texts.length);
+
+t.innerHTML = texts[rand];
+t.style.display = "block";
+
+setTimeout(function(){
+t.style.display = "none";
+},2000);
+}
+
+setInterval(showToast,4000);
+
+/* 支付 */
+function pay(){
+
+/* 👉 替换成你的链接 */
+window.location.href = "你的收款链接";
+
+setTimeout(function(){
+window.location.href = "report.html";
+},1500);
+
+}
+
+</script>
+
+</body>
+</html>

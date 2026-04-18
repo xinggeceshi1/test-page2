@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你的情感分析报告</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system;
+    background:linear-gradient(180deg,#ffe4ec,#fff);
+}
+
+/* 容器 */
+.container{
+    max-width:520px;
+    margin:0 auto;
+    padding:20px;
+}
+
+/* 标题 */
+.title{
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#ff4d6d;
+}
+
+/* 类型 */
+.type{
+    text-align:center;
+    font-size:24px;
+    color:#ff3b30;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+/* 卡片 */
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 10px 30px rgba(255,77,109,0.1);
+}
+
+/* 小标题 */
+.st{
+    font-size:16px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* 文本 */
+.text{
+    font-size:14px;
+    color:#333;
+    line-height:1.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">你的深层情感解析报告</div>
+<div class="type" id="type"></div>
+
+<div class="card">
+<div class="st">你的真实内心</div>
+<div class="text" id="core"></div>
+</div>
+
+<div class="card">
+<div class="st">你的情感模式</div>
+<div class="text" id="emotion"></div>
+</div>
+
+<div class="card">
+<div class="st">你在关系中的致命点</div>
+<div class="text" id="weak"></div>
+</div>
+
+<div class="card">
+<div class="st">你未来的情感走向</div>
+<div class="text" id="future"></div>
+</div>
+
+<div class="card">
+<div class="st">给你的建议</div>
+<div class="text" id="advice"></div>
+</div>
+
+<div class="card">
+<div class="st">行动方向</div>
+<div class="text" id="action"></div>
+</div>
+
+</div>
+
+<script>
+
+/* 获取答案 */
+var answers = JSON.parse(localStorage.getItem("result")||"{}");
+
+/* 👉 评分系统 */
+var score = {safe:0, anx:0, avoid:0, free:0};
+
+/* 单选 */
+if(answers[1]==0) score.anx+=2;
+if(answers[1]==2) score.safe+=2;
+
+if(answers[3]==0) score.anx+=2;
+if(answers[3]==1) score.free+=2;
+
+if(answers[4]==0) score.anx+=2;
+if(answers[4]==2) score.avoid+=2;
+
+/* 多选 */
+if(answers[12]){
+if(answers[12].indexOf(0)>-1) score.anx+=2;
+if(answers[12].indexOf(2)>-1) score.avoid+=2;
+}
+
+if(answers[16]){
+if(answers[16].indexOf(0)>-1) score.anx+=2;
+if(answers[16].indexOf(3)>-1) score.free+=2;
+}
+
+/* 计算类型 */
+var maxType="safe",max=0;
+for(var k in score){
+if(score[k]>max){
+max=score[k];
+maxType=k;
+}
+}
+
+/* 细分类型 */
+var typeMap={
+safe:["温和依赖型","稳定投入型"],
+anx:["高敏焦虑型","情绪依附型"],
+avoid:["理性疏离型","自我保护型"],
+free:["自由探索型","情绪游离型"]
+};
+
+var arr=typeMap[maxType];
+var finalType=arr[Math.floor(Math.random()*arr.length)];
+
+document.getElementById("type").innerHTML=finalType;
+
+/* 数据库 */
+var result={
+
+"高敏焦虑型":{
+core:"你其实比任何人都更渴望被坚定选择，但你不会直接说出来。你习惯用试探、观察来确认对方的心意。",
+emotion:"你在关系中投入很深，但容易因为细节反复确认，对方的一点变化都会影响你的情绪。",
+weak:"你最大的弱点是过度解读，对方一个小举动，你会在脑中放大成很多种可能。",
+future:"如果遇到稳定型伴侣，你会慢慢变得安心，否则容易反复拉扯。",
+advice:"减少反复确认，把注意力拉回自己。",
+action:"延迟情绪判断10分钟再反应。"
+},
+
+"情绪依附型":{
+core:"你非常重视情感连接，一旦建立关系，就会把对方放在很重要的位置。",
+emotion:"你需要回应与存在感，否则会产生不安。",
+weak:"容易过度依赖对方情绪反馈。",
+future:"未来更适合稳定回应型伴侣。",
+advice:"降低对即时回应的依赖。",
+action:"减少查看消息频率。"
+},
+
+"理性疏离型":{
+core:"你其实很清醒，也很理性，不会轻易投入感情。",
+emotion:"你更习惯控制情绪，而不是表达情绪。",
+weak:"容易给人距离感。",
+future:"遇到温柔型会逐渐打开。",
+advice:"尝试表达真实感受。",
+action:"每周表达一次情绪。"
+},
+
+"自我保护型":{
+core:"你不是不想爱，而是更怕受伤。",
+emotion:"你习惯先保护自己，再考虑关系。",
+weak:"容易错过合适的人。",
+future:"需要安全感才能投入。",
+advice:"尝试建立信任。",
+action:"做1次轻微信任尝试。"
+},
+
+"自由探索型":{
+core:"你向往自由与新鲜感，不喜欢被束缚。",
+emotion:"你更享受过程，而不是结果。",
+weak:"容易短期投入。",
+future:"适合节奏一致的人。",
+advice:"明确关系底线。",
+action:"写下3个底线。"
+},
+
+"情绪游离型":{
+core:"你有时热情有时冷淡。",
+emotion:"情绪变化较大。",
+weak:"让对方缺乏安全感。",
+future:"需要稳定内心。",
+advice:"建立稳定节奏。",
+action:"记录情绪变化。"
+},
+
+"温和依赖型":{
+core:"你温柔稳定。",
+emotion:"慢慢投入。",
+weak:"容易忽略自己。",
+future:"适合稳定伴侣。",
+advice:"关注自己需求。",
+action:"每周为自己安排时间。"
+},
+
+"稳定投入型":{
+core:"你适合长期关系。",
+emotion:"稳定真诚。",
+weak:"容易过度付出。",
+future:"婚恋优势高。",
+advice:"设立边界。",
+action:"表达一次需求。"
+}
+
+};
+
+var r=result[finalType]||result["温和依赖型"];
+
+document.getElementById("core").innerHTML=r.core;
+document.getElementById("emotion").innerHTML=r.emotion;
+document.getElementById("weak").innerHTML=r.weak;
+document.getElementById("future").innerHTML=r.future;
+document.getElementById("advice").innerHTML=r.advice;
+document.getElementById("action").innerHTML=r.action;
+
+</script>
+
+</body>
+</html>
